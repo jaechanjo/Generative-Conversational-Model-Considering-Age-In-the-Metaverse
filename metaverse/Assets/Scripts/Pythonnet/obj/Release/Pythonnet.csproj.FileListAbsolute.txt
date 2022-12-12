@@ -1,0 +1,10 @@
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\Assets\Scripts\Pythonnet\bin\Release\Pythonnet.dll
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\Assets\Scripts\Pythonnet\bin\Release\Pythonnet.pdb
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\Assets\Scripts\Pythonnet\bin\Release\Python.Runtime.dll
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\Assets\Scripts\Pythonnet\bin\Release\UnityEngine.dll
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\Assets\Scripts\Pythonnet\bin\Release\UnityEngine.xml
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\Assets\Scripts\Pythonnet\obj\Release\Pythonnet.csproj.AssemblyReference.cache
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\Assets\Scripts\Pythonnet\obj\Release\Pythonnet.csproj.CoreCompileInputs.cache
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\Assets\Scripts\Pythonnet\obj\Release\Pythonnet.csproj.CopyComplete
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\Assets\Scripts\Pythonnet\obj\Release\Pythonnet.dll
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\Assets\Scripts\Pythonnet\obj\Release\Pythonnet.pdb

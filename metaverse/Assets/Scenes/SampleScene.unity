@@ -1236,7 +1236,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   move: {x: 0, y: 0}
   look: {x: 0, y: 0}
-  jump: 0
+  jump: 1
   sprint: 0
   analogMovement: 0
   cursorLocked: 1
@@ -1432,8 +1432,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7aaeb88a05805064faf9e211a04ccf25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serverIP: 127.0.0.1
+  port: 8000
+  receivedBuffer: []
+  socketReady: 0
+  ani: {fileID: 0}
   _playerComment: {fileID: 1800712788}
   _NPC_Comment: {fileID: 1344485558}
+  audio: {fileID: 0}
   gameObject: {fileID: 1344485557}
 --- !u!4 &1931883688
 Transform:
