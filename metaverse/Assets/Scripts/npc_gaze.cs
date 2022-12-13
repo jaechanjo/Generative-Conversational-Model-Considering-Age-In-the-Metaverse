@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class npc_gaze : MonoBehaviour
 {
-    public Transform player;
+    public Transform Player;
     // Start is called before the first frame update
     void Start()
     {
@@ -14,6 +14,6 @@ public class npc_gaze : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate () 
     {
-        transform.LookAt(player);
+        transform.LookAt(Player);
     }
 }
