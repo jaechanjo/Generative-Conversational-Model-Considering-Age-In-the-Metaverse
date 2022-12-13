@@ -1,0 +1,10 @@
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\DllTest\bin\Release\DllTest.dll
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\DllTest\bin\Release\DllTest.pdb
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\DllTest\bin\Release\Python.Runtime.dll
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\DllTest\bin\Release\UnityEngine.dll
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\DllTest\bin\Release\UnityEngine.xml
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\DllTest\obj\Release\DllTest.csproj.AssemblyReference.cache
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\DllTest\obj\Release\DllTest.csproj.CoreCompileInputs.cache
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\DllTest\obj\Release\DllTest.csproj.CopyComplete
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\DllTest\obj\Release\DllTest.dll
+C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\metaverse\DllTest\obj\Release\DllTest.pdb
