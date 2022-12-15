@@ -10,8 +10,6 @@ using System.Text;
 public class dlltest : MonoBehaviour
 {
 
-
-
     // Start is called before the first frame update
     void Start()
     {
@@ -46,9 +44,9 @@ public class dlltest : MonoBehaviour
                 var fromFile = Py.Import(Path.GetFileNameWithoutExtension(python_file_path));
                 
                 // pythonnet_test.py 에서 replace 메소드를 호출
-                fromFile.InvokeMethod("replace");
-                Console.Write(fromFile.InvokeMethod("replace"));
-                Debug.Log(fromFile.InvokeMethod("replace"));
+                fromFile.InvokeMethod("test");
+                Console.Write(fromFile.InvokeMethod("test"));
+                Debug.Log(fromFile.InvokeMethod("test"));
             }
             
             // python 환경을 종료한다.
