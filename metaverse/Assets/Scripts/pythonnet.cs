@@ -11,7 +11,8 @@ using System.Runtime.InteropServices;
 using VikingCrewDevelopment.Demos;
 using SpeechBubbleManager = VikingCrewTools.UI.SpeechBubbleManager;
 using UnityEditor.Animations;
-
+using System.Threading;
+using System.Threading.Tasks;
 
 public class pythonnet : MonoBehaviour
 {
@@ -29,12 +30,24 @@ public class pythonnet : MonoBehaviour
         debug.Test();
         ani = gameObject.GetComponent<Animator>();
         audio = GetComponent<AudioSource>();
+        Debug.Log("Run() invoked in Start()");
+        Debug.Log("Run() returns");
     }
 
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Z))
+        {
+            Run();
+            Talk();
+        }
+
+    }
+
+    async void Run()
+    {
+       await Task.Run(() =>
         {
             Debug.Log("Z키 누름");
             // 가상환경 경로
@@ -59,48 +72,47 @@ public class pythonnet : MonoBehaviour
 
                 // pythonnet_test.py 에서 replace 메소드를 호출
                 var a = fromFile.InvokeMethod("test");
-                
+
                 Debug.Log(a);
-
-                AssetDatabase.Refresh();
-
-                //                string comment = ReadTextOneLine("chat_input");
-                string comment = "hi";
-
-
-                Debug.Log(string.Format("Char Input : {0}", comment));
-
-                _playerComment.thingsToSay[0] = comment;
-
-                _playerComment.SaySomething(comment, SpeechBubbleManager.Instance.GetRandomSpeechbubbleType());
-                _playerComment.thingsToSay[0] = "";
-
-                AssetDatabase.Refresh();
-
-                Invoke("Wait2Sec", 1f);
-
-                //string comment2 = ReadTextOneLine("chat_output");
-                string comment2 = "hi2";
-
-                Debug.Log(string.Format("Char output : {0}", comment2));
-
-                _NPC_Comment.thingsToSay[0] = comment2;
-
-                _NPC_Comment.SaySomething(comment2, SpeechBubbleManager.Instance.GetRandomSpeechbubbleType());
-                _NPC_Comment.thingsToSay[0] = "";
-
             }
 
             // python 환경을 종료한다.
             PythonEngine.Shutdown();
-
-            Console.WriteLine("Press any key...");
             Debug.Log("업데이트 됨");
-
-            
-        }
+        });
     }
 
+    void Talk()
+    {
+        AssetDatabase.Refresh();
+        //                string comment = ReadTextOneLine("chat_input");
+        string comment = "hi";
+
+
+        Debug.Log(string.Format("Char Input : {0}", comment));
+
+        _playerComment.thingsToSay[0] = comment;
+
+        _playerComment.SaySomething(comment, SpeechBubbleManager.Instance.GetRandomSpeechbubbleType());
+        _playerComment.thingsToSay[0] = "";
+
+
+
+
+        AssetDatabase.Refresh();
+        //string comment2 = ReadTextOneLine("chat_output");
+        string comment2 = "hi2";
+
+        Debug.Log(string.Format("Char output : {0}", comment2));
+
+        _NPC_Comment.thingsToSay[0] = comment2;
+
+        _NPC_Comment.SaySomething(comment2, SpeechBubbleManager.Instance.GetRandomSpeechbubbleType());
+        _NPC_Comment.thingsToSay[0] = "";
+    }
+
+
+    // bublle message
     string ReadTextOneLine(string _filename)
     {
         TextAsset data = Resources.Load(_filename) as TextAsset;

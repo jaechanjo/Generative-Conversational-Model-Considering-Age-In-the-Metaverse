@@ -382,6 +382,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Speechbubble Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 114000013829348910, guid: 0052c7a2273aa0a468757492e71cdaa6, type: 3}
+      propertyPath: _prefabs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 224000011360181680, guid: 0052c7a2273aa0a468757492e71cdaa6, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
