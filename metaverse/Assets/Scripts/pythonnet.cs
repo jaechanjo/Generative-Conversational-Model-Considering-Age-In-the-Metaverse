@@ -20,8 +20,8 @@ public class pythonnet : MonoBehaviour
 
     [SerializeField] private SayRandomThingsBehaviour _playerComment, _NPC_Comment;
 
-    private AudioSource audio;
-    public GameObject gameObject;
+    private AudioSource Audio;
+    public GameObject GameObject;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +29,7 @@ public class pythonnet : MonoBehaviour
         MakeDllClass debug = new MakeDllClass();
         debug.Test();
         ani = gameObject.GetComponent<Animator>();
-        audio = GetComponent<AudioSource>();
+        Audio = GetComponent<AudioSource>();
         Debug.Log("Run() invoked in Start()");
         Debug.Log("Run() returns");
     }
@@ -78,7 +78,7 @@ public class pythonnet : MonoBehaviour
 
             // python 환경을 종료한다.
             PythonEngine.Shutdown();
-            Debug.Log("업데이트 됨");
+            Debug.Log("Python 실행됨");
         });
     }
 
