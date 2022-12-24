@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from fileinput import filename
+import io
 import os
 import sys
 # sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
@@ -46,6 +47,8 @@ parser.add_argument('--train',
                     help='for training')
 
 audio_data = pd.read_csv('C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/age.csv')
+speech_file = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/audio.wav'
+
 
 class AgeSoundDataset(Dataset):
 
@@ -216,128 +219,30 @@ def predict(model, input, target, class_mapping):
     return predicted, expected
 
 
-class MicrophoneStream(object):
-    """Opens a recording stream as a generator yielding the audio chunks."""
-    def __init__(self, rate, chunk):
-        self._rate = rate
-        self._chunk = chunk
+def transcribe_file(speech_file):
+    """Transcribe the given audio file."""
+    from google.cloud import speech
+    import io
+    import os
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS']=r"C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/sesac-371212-227f22f8a69a.json"
+    client = speech.SpeechClient()
 
-        # Create a thread-safe buffer of audio data
-        self._buff = queue.Queue()
-        self.closed = True
+    with io.open(speech_file, "rb") as audio_file:
+        content = audio_file.read()
 
-    def __enter__(self):
-        # create pyaudio interface
-        self._audio_interface = pyaudio.PyAudio()
-        self._audio_stream = self._audio_interface.open(
-            format=pyaudio.paInt16,
-            # The API currently only supports 1-channel (mono) audio
-            # https://goo.gl/z757pE
-            channels=1, rate=self._rate,
-            input=True, frames_per_buffer=self._chunk,
-            # Run the audio stream asynchronously to fill the buffer object.
-            # This is necessary so that the input device's buffer doesn't
-            # overflow while the calling thread makes network requests, etc.
-            stream_callback=self._fill_buffer,
-        )
-        
-        self.closed = False
+    audio = speech.RecognitionAudio(content=content)
+    config = speech.RecognitionConfig(
+        encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
+        sample_rate_hertz=44100,
+        language_code="ko-KR",
+    )
 
-        return self
+    response = client.recognize(config=config, audio=audio)
 
-    def __exit__(self, type, value, traceback):
-        self._audio_stream.stop_stream()
-        self._audio_stream.close()
-        self.closed = True
-        # Signal the generator to terminate so that the client's
-        # streaming_recognize method will not block the process termination.
-        self._buff.put(None)
-        self._audio_interface.terminate()
-
-
-    def _fill_buffer(self, in_data, frame_count, time_info, status_flags):
-        """Continuously collect data from the audio stream, into the buffer."""
-        self._buff.put(in_data)
-        return None, pyaudio.paContinue
-
-    def generator(self):
-        while not self.closed:
-            # Use a blocking get() to ensure there's at least one chunk of
-            # data, and stop iteration if the chunk is None, indicating the
-            # end of the audio stream.
-            chunk = self._buff.get()
-            if chunk is None:
-                return
-            data = [chunk]
-            # Now consume whatever other adata's still buffered.
-            while True:
-                try:
-                    chunk = self._buff.get(block=False)
-                    if chunk is None:
-                        return
-                    data.append(chunk)
-                except queue.Empty:
-                    break
-
-            yield b''.join(data)
-
-
-def listen_print_loop(responses):
-    """Iterates through server responses and prints them.
-    The responses passed is a generator that will block until a response
-    is provided by the server.
-    Each response may contain multiple results, and each result may contain
-    multiple alternatives; for details, see https://goo.gl/tjCPAU.  Here we
-    print only the transcription for the top alternative of the top result.
-    In this case, responses are provided for interim results as well. If the
-    response is an interim one, print a line feed at the end of it, to allow
-    the next result to overwrite it, until the response is a final one. For the
-    final one, print a newline to preserve the finalized transcription.
-    """
-    num_chars_printed = 0
-    for response in responses:
-        if not response.results:
-            continue
-
-        # The `results` list is consecutive. For streaming, we only care about
-        # the first result being considered, since once it's `is_final`, it
-        # moves on to considering the next utterance.
-        result = response.results[0]
-        if not result.alternatives:
-            continue
-        
-        # Display the transcription of the top alternative.
-        transcript = result.alternatives[0].transcript
-        
-        # Display interim results, but with a carriage return at the end of the
-        # line, so subsequent lines will overwrite them.
-        #
-        # If the previous result was longer than this one, we need to print
-        # some extra spaces to overwrite the previous result
-        overwrite_chars = ' ' * (num_chars_printed - len(transcript))
-             
-    
-        if not result.is_final:
-            sys.stdout.write(transcript + overwrite_chars + '\r')
-            sys.stdout.flush()
-
-            num_chars_printed = len(transcript)
-
-            
-        else:
-            user_input = transcript + overwrite_chars  
-            # print(user_input)
-            # print(type(user_input))
-            # Exit recognition if any of the transcribed phrases could be
-            # one of our keywords.
-            
-            num_chars_printed = 0
-            return user_input
-            if re.search(r'\b(exit|quit)\b', transcript, re.I):
-                print('Exiting..')
-                break
-            # dialogue_trainer.KoGPT2Chat.chat(KoGPT2Chat.self, sent='0')
-            num_chars_printed = 0
+    for result in response.results:
+        stt_result = result.alternatives[0].transcript
+        print(u"Transcript: {}".format(stt_result))
+    return stt_result
 
 
 
@@ -501,141 +406,99 @@ class KoGPT2Chat(LightningModule):
     def chat(self, sent='0'):
         tok = TOKENIZER
         sent_tokens = tok.tokenize(sent)
-        client = speech.SpeechClient()
-        config = speech.RecognitionConfig(encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,sample_rate_hertz=RATE,language_code='ko-KR')
-        streaming_config = speech.StreamingRecognitionConfig(config=config, single_utterance = True ,interim_results=True)
+        
         while 1:
             print('user > ')
-            with MicrophoneStream(RATE, CHUNK) as stream:
-                audio_generator = stream.generator()
-            ######################################################
-                def myReq(content):
-                    
-                    # frames.append(content)
-                    # wavfile.setnchannels(1)
-                    # wavfile.setsampwidth(2)
-                    # wavfile.setframerate(22050)
-                    # # wav 저장하는 코드
-                    # wavfile.writeframes(b''.join(content))#append frames recorded to file
-                    return speech.StreamingRecognizeRequest(audio_content=content)
-                    
-          
-                # wav  열고
+            chat_input = transcribe_file(speech_file)
+
+            with torch.no_grad():
+                ###############################################
+                ANNOTATIONS_FILE = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/age.csv'
+                AUDIO_DIR = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/'
+                SAMPLE_RATE = 22050
+                NUM_SAMPLES = 22050
+
+                # load back the model
+                cnn = CNNNetwork()
+                state_dict = torch.load("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/age.pth")
+                cnn.load_state_dict(state_dict)
+
+                # load age dataset
+                mel_spectrogram = torchaudio.transforms.MelSpectrogram(
+                    sample_rate = SAMPLE_RATE,
+                    n_fft = 1024,
+                    hop_length = 512,
+                    n_mels = 64
+                )
+                # ms = mel_spectrogram(signal)
+
+                asd = AgeSoundDataset(ANNOTATIONS_FILE, AUDIO_DIR, mel_spectrogram,
+                                        SAMPLE_RATE, NUM_SAMPLES, "cpu")
                 
-                # wavfile = wave.open(FILE_NAME,'wb') 
-                # frames=[]
-                # wavfile.setparams((1, 2, 22050, 0, "NONE", "Uncompressed")) 
-                requests = (myReq(content)for content in audio_generator)
-                # wavfile.close() 
-                # requests = (speech.StreamingRecognizeRequest(audio_content=content) for content in audio_generator)
-                ###########################
-                
-                responses = client.streaming_recognize(streaming_config, requests)
-                
-                chat_input = listen_print_loop(responses)
-                # Now, put the transcription responses to use.
+                # get a sample from the age dataset for infence
+                input, target = asd[0][0], asd[0][1] # [batch size, num_channels, frequncy, time]
+                input.unsqueeze_(0)
 
-                
-                with torch.no_grad():
-                    ###############################################
-                    ANNOTATIONS_FILE = 'C:/Users/dla12/Documents/Developer/Sesac/age/age.csv'
-                    AUDIO_DIR = 'C:/Users/dla12/Documents/Developer/Unity/sesac/Assets/Resources/'
-                    SAMPLE_RATE = 22050
-                    NUM_SAMPLES = 22050
+                # make an infernece
+                predicted, expected = predict(cnn, input, target, class_mapping)
+                age = int(predicted)
 
-                    # load back the model
-                    cnn = CNNNetwork()
-                    state_dict = torch.load("C:/Users/dla12/Documents/Developer/Sesac/age/age.pth")
-                    cnn.load_state_dict(state_dict)
+                if (age <= 19):
+                    age_output = ' child'
+                elif (age > 20 & age < 59):
+                    age_output = ' adult'
+                else:
+                    age_output = ' senior'    
 
-                    # load age dataset
-                    mel_spectrogram = torchaudio.transforms.MelSpectrogram(
-                        sample_rate = SAMPLE_RATE,
-                        n_fft = 1024,
-                        hop_length = 512,
-                        n_mels = 64
-                    )
-                    # ms = mel_spectrogram(signal)
+                print(age)
+                print(f"Predicted: '{age_output}'")
+                ##################################################
+                print(chat_input)
+                with open("C:/Users/dla12/Documents/Developer/Unity/sesac/Assets/Resources/chat_input.txt", "w",encoding="UTF-8") as f:
+                    # Write the response to the output file.
 
-                    asd = AgeSoundDataset(ANNOTATIONS_FILE, AUDIO_DIR, mel_spectrogram,
-                                            SAMPLE_RATE, NUM_SAMPLES, "cpu")
-                    
-                    # get a sample from the age dataset for infence
-                    input, target = asd[0][0], asd[0][1] # [batch size, num_channels, frequncy, time]
-                    input.unsqueeze_(0)
+                    f.write(chat_input)
+                    f.close()
+                p = chat_input + age_output
+                # client_socket.sendall("chat_input.txt".encode("UTF-8"))
+                q = p.strip()
+                a = ''
+                while 1:
+                    input_ids = torch.LongTensor(tok.encode(U_TKN + q + SENT + sent + S_TKN + a)).unsqueeze(dim=0)
+                    pred = self(input_ids)
+                    gen = tok.convert_ids_to_tokens(
+                    torch.argmax(
+                        pred,
+                        dim=-1).squeeze().numpy().tolist())[-1]
+                    if gen == EOS:
+                        break
+                    a += gen.replace('▁', ' ')
+                    chat_output = a.strip()
+                print("Chatbot > {}".format(chat_output))
+                with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/chat_output.txt", "w",encoding="UTF-8") as f:
+                    # Write the response to the output file.
+                    f.write(chat_output)
+                    f.close()
+                client_tts = texttospeech.TextToSpeechClient()
 
-                    # make an infernece
-                    predicted, expected = predict(cnn, input, target, class_mapping)
-                    age = int(predicted)
+                synthesis_input = texttospeech.SynthesisInput(text=chat_output)
 
-                    if (age <= 19):
-                        age_output = ' child'
-                    elif (age > 20 & age < 59):
-                        age_output = ' adult'
-                    else:
-                        age_output = ' senior'    
+                voice = texttospeech.VoiceSelectionParams(
+                    language_code="ko-KR", name="ko-KR-Wavenet-D",ssml_gender=texttospeech.SsmlVoiceGender.MALE
+                )
 
-                    print(age)
-                    print(f"Predicted: '{age_output}'")
-                    ##################################################
-                    print(chat_input)
-                    with open("C:/Users/dla12/Documents/Developer/Unity/sesac/Assets/Resources/chat_input.txt", "w",encoding="UTF-8") as f:
-                        # Write the response to the output file.
+                audio_config = texttospeech.AudioConfig(
+                    audio_encoding=texttospeech.AudioEncoding.LINEAR16
+                )
 
-                        f.write(chat_input)
-                        f.close()
-                    p = chat_input + age_output
-                    # client_socket.sendall("chat_input.txt".encode("UTF-8"))
-                    q = p.strip()
-                    a = ''
-                    while 1:
-                        input_ids = torch.LongTensor(tok.encode(U_TKN + q + SENT + sent + S_TKN + a)).unsqueeze(dim=0)
-                        pred = self(input_ids)
-                        gen = tok.convert_ids_to_tokens(
-                        torch.argmax(
-                            pred,
-                            dim=-1).squeeze().numpy().tolist())[-1]
-                        if gen == EOS:
-                            break
-                        a += gen.replace('▁', ' ')
-                        chat_output = a.strip()
-                    print("Chatbot > {}".format(chat_output))
-                    with open("C:/Users/dla12/Documents/Developer/Unity/sesac/Assets/Resources/chat_output.txt", "w",encoding="UTF-8") as f:
-                        # Write the response to the output file.
-                        f.write(chat_output)
-                        f.close()
-                    # client_socket.sendall("chat_output.txt".encode("UTF-8"))
-                    # return q
-                    # Instantiates a client
-                    client_tts = texttospeech.TextToSpeechClient()
+                response_tts = client_tts.synthesize_speech(
+                    input=synthesis_input, voice=voice, audio_config=audio_config
+                )
 
-                    # Set the text input to be synthesized
-                    synthesis_input = texttospeech.SynthesisInput(text=chat_output)
+                with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/output.wav", "wb") as out:
+                    out.write(response_tts.audio_content)
+                    f.close()
 
-                    # Build the voice request, select the language code ("en-US") and the ssml
-                    # voice gender ("neutral")
-                    voice = texttospeech.VoiceSelectionParams(
-                        language_code="ko-KR", name="ko-KR-Wavenet-D",ssml_gender=texttospeech.SsmlVoiceGender.MALE
-                    )
-
-                    # Select the type of audio file you want returned
-                    audio_config = texttospeech.AudioConfig(
-                        audio_encoding=texttospeech.AudioEncoding.LINEAR16
-                    )
-
-                    # Perform the text-to-speech request on the text input with the selected
-                    # voice parameters and audio file type
-                    response_tts = client_tts.synthesize_speech(
-                        input=synthesis_input, voice=voice, audio_config=audio_config
-                    )
-
-                    # The response's audio_content is binary.
-                    with open("C:/Users/dla12/Documents/Developer/Unity/sesac/Assets/Resources/output.wav", "wb") as out:
-                        # Write the response to the output file.
-                        out.write(response_tts.audio_content)
-                        f.close()
-                    # client_socket.sendall("output.wav".encode("UTF-8"))
-                        # print('Audio content written to file "output.mp3"')
 
 
 
@@ -645,34 +508,6 @@ args = parser.parse_args()
 logging.info(args)
 
 if __name__ == "__main__":
-    ANNOTATIONS_FILE = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/age.csv'
-    AUDIO_DIR = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/'
-    SAMPLE_RATE = 22050
-    NUM_SAMPLES = 22050
-
-    # load back the model
-    cnn = CNNNetwork()
-    state_dict = torch.load("C:/Users/dla12/Documents/Developer/Sesac/age/age.pth")
-    cnn.load_state_dict(state_dict)
-
-    # load age dataset
-    mel_spectrogram = torchaudio.transforms.MelSpectrogram(
-        sample_rate = SAMPLE_RATE,
-        n_fft = 1024,
-        hop_length = 512,
-        n_mels = 64
-    )
-    # ms = mel_spectrogram(signal)
-
-    asd = AgeSoundDataset(ANNOTATIONS_FILE, AUDIO_DIR, mel_spectrogram,
-                            SAMPLE_RATE, NUM_SAMPLES, "cpu")
-    
-    # get a sample from the age dataset for infence
-    input, target = asd[0][0], asd[0][1] # [batch size, num_channels, frequncy, time]
-    input.unsqueeze_(0)
-
-    # make an infernece
-    predicted, expected = predict(cnn, input, target, class_mapping)
-
-    print(f"Predicted: '{predicted}'")
+    model = KoGPT2Chat.load_from_checkpoint(args.model_params)
+    model.chat()
   
