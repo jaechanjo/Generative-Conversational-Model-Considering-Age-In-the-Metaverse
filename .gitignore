@@ -75,3 +75,10 @@ crashlytics-build.properties
 /metaverse/[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # End of https://www.toptal.com/developers/gitignore/api/unity
+
+# torch.model
+*.ckpt
+sesac-371212-227f22f8a69a.json
+*.pth
+audio.wav
+age.py

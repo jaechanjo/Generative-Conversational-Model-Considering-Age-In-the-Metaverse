@@ -54,6 +54,7 @@ public class Mic : MonoBehaviour
     {
         Debug.Log("invoke 3초");
         SavWav.Save("audio.wav", aud.clip);
+        Debug.Log("파일 저장완료");
     }
 
     //public void myInvoke(AudioClip myAudio)
