@@ -8,10 +8,10 @@ os.environ['GOOGLE_APPLICATION_CREDENTIALS']=r"C:/Users/dla12/Documents/Develope
 # from test import overwrite_chars
 import argparse
 import logging
+import subprocess
 from multiprocessing import Process, freeze_support
 import numpy as np
 import pandas as pd
-import torch
 from pytorch_lightning import Trainer
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.core.lightning import LightningModule
@@ -19,7 +19,6 @@ from torch.utils.data import DataLoader, Dataset
 from transformers.optimization import AdamW, get_cosine_schedule_with_warmup
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 import pyaudio
-from six.moves import queue
 from google.cloud import speech
 from google.cloud import texttospeech
 from array import array
@@ -28,12 +27,20 @@ import torch.optim as optim
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import librosa
+from argparse import ArgumentParser
+from googletrans import Translator
+
+
+from gesticulator.model.model import GesticulatorModel
+from gesticulator.interface.gesture_predictor import GesturePredictor
+from gesticulator.visualization.motion_visualizer.generate_videos import visualize
 
 parser = argparse.ArgumentParser(description='Age_dialogue based on KoGPT-2')
 
 parser.add_argument('--chat',
                     action='store_true',
-                    default=False,
+                    default='False',
                     help='response generation on given user input')
 
 parser.add_argument('--model_params',
@@ -115,6 +122,103 @@ class AgeSoundDataset(Dataset):
     def _get_audio_sample_label(self, index):
         # print(self.annotaions.iloc[index, 6])
         return self.annotaions.iloc[index, 6]
+
+def gesture(args):
+    # 0. Check feature type based on the model
+    feature_type, audio_dim = check_feature_type(args.model_file)
+    # 1. Load the model
+    model = GesticulatorModel.load_from_checkpoint(
+        args.model_file, inference_mode=True)
+    # print(model)
+    # This interface is a wrapper around the model for predicting new gestures conveniently
+    gp = GesturePredictor(model, feature_type)
+    # args.audio = "C:/Users/sogang/Documents/development/Python/final/output.wav"
+    # args.text = "C:/Users/sogang/Documents/development/Python/final/output.txt"
+    # 2. Predict the gestures with the loaded model
+    print(args.audio + args.text)
+    motion = gp.predict_gestures(args.audio, args.text)
+    # 3. Visualize the results
+    motion_length_sec = int(motion.shape[1] / 20)
+
+    visualize(motion.detach(), "temp.bvh", "temp.npy", "temp.mp4", 
+            start_t = 0, end_t = motion_length_sec, 
+            data_pipe_dir = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/gesticulator/utils/data_pipe.sav')
+
+    # Add the audio to the video
+    command = f"ffmpeg -y -i {args.audio} -i temp.mp4 -c:v libx264 -c:a libvorbis -loglevel quiet -shortest {args.video_out}"
+    subprocess.call(command.split())
+
+    # print("\nGenerated video:", args.video_out)
+    
+    # Remove temporary files
+    # for ext in ["bvh", "npy", "mp4"]:
+    for ext in ["npy", "mp4"]:
+        os.remove("temp." + ext)
+
+def check_feature_type(model_file):
+    """
+    Return the audio feature type and the corresponding dimensionality
+    after inferring it from the given model file.
+    """
+    params = torch.load(model_file, map_location=torch.device('cpu'))
+
+    # audio feature dim. + text feature dim.
+    audio_plus_text_dim = params['state_dict']['encode_speech.0.weight'].shape[1]
+
+    # This is a bit hacky, but we can rely on the fact that 
+    # BERT has 768-dimensional vectors
+    # We add 5 extra features on top of that in both cases.
+    text_dim = 768 + 5
+
+    audio_dim = audio_plus_text_dim - text_dim
+
+    if audio_dim == 4:
+        feature_type = "Pros"
+    elif audio_dim == 64:
+        feature_type = "Spectro"
+    elif audio_dim == 68:
+        feature_type = "Spectro+Pros"
+    elif audio_dim == 26:
+        feature_type = "MFCC"
+    elif audio_dim == 30:
+        feature_type = "MFCC+Pros"
+    else:
+        print("Error: Unknown audio feature type of dimension", audio_dim)
+        exit(-1)
+
+    return feature_type, audio_dim
+
+
+# def truncate_audio(input_path, target_duration_sec):
+#     """
+#     Load the given audio file and truncate it to 'target_duration_sec' seconds.
+#     The truncated file is saved in the same folder as the input.
+#     """
+#     audio, sr = librosa.load(input_path, duration = int(target_duration_sec))
+#     output_path = input_path.replace('.wav', f'_{target_duration_sec}s.wav')
+
+#     librosa.output.write_wav(output_path, audio, sr)
+
+#     return output_path
+
+def parse_args():
+    parser = ArgumentParser()
+    parser.add_argument('--audio', type=str, default="C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/output.wav", help="path to the input speech recording")
+    parser.add_argument('--text', type=str, default="C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/chat_output_en.txt",
+                        help="one of the following: "
+                            "1) path to a time-annotated JSON transcription (this is what the model was trained with) "
+                            "2) path to a plaintext transcription, or " 
+                            "3) the text transcription itself (as a string)")
+    parser.add_argument('--video_out', '-video', type=str, default="output/generated_motion.mp4",
+                        help="the path where the generated video will be saved.")
+    parser.add_argument('--model_file', '-model', type=str, default="demo/models/default.ckpt",
+                        help="path to a pretrained model checkpoint")
+    parser.add_argument('--mean_pose_file', '-mean_pose', type=str, default="../gesticulator/utils/mean_pose.npy",
+                        help="path to the mean pose in the dataset (saved as a .npy file)")
+    
+    return parser.parse_args()
+
+
 
 from torch import nn
 from torchsummary import summary
@@ -407,97 +511,111 @@ class KoGPT2Chat(LightningModule):
         tok = TOKENIZER
         sent_tokens = tok.tokenize(sent)
         
-        while 1:
-            print('user > ')
-            chat_input = transcribe_file(speech_file)
+        # while 1:
+        print('user > ')
+        chat_input = transcribe_file(speech_file)
 
-            with torch.no_grad():
-                ###############################################
-                ANNOTATIONS_FILE = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/age.csv'
-                AUDIO_DIR = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/'
-                SAMPLE_RATE = 22050
-                NUM_SAMPLES = 22050
+        with torch.no_grad():
+            ###############################################
+            ANNOTATIONS_FILE = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/age.csv'
+            AUDIO_DIR = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/'
+            SAMPLE_RATE = 22050
+            NUM_SAMPLES = 22050
 
-                # load back the model
-                cnn = CNNNetwork()
-                state_dict = torch.load("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/age.pth")
-                cnn.load_state_dict(state_dict)
+            # load back the model
+            cnn = CNNNetwork()
+            state_dict = torch.load("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/age.pth")
+            cnn.load_state_dict(state_dict)
 
-                # load age dataset
-                mel_spectrogram = torchaudio.transforms.MelSpectrogram(
-                    sample_rate = SAMPLE_RATE,
-                    n_fft = 1024,
-                    hop_length = 512,
-                    n_mels = 64
-                )
-                # ms = mel_spectrogram(signal)
+            # load age dataset
+            mel_spectrogram = torchaudio.transforms.MelSpectrogram(
+                sample_rate = SAMPLE_RATE,
+                n_fft = 1024,
+                hop_length = 512,
+                n_mels = 64
+            )
+            # ms = mel_spectrogram(signal)
 
-                asd = AgeSoundDataset(ANNOTATIONS_FILE, AUDIO_DIR, mel_spectrogram,
-                                        SAMPLE_RATE, NUM_SAMPLES, "cpu")
+            asd = AgeSoundDataset(ANNOTATIONS_FILE, AUDIO_DIR, mel_spectrogram,
+                                    SAMPLE_RATE, NUM_SAMPLES, "cpu")
+            
+            # get a sample from the age dataset for infence
+            input, target = asd[0][0], asd[0][1] # [batch size, num_channels, frequncy, time]
+            input.unsqueeze_(0)
+
+            # make an infernece
+            predicted, expected = predict(cnn, input, target, class_mapping)
+            age = int(predicted)
+
+            if (age <= 19):
+                age_output = ' child'
+            elif (age > 20 & age < 59):
+                age_output = ' adult'
+            else:
+                age_output = ' senior'    
+
+            print(age)
+            print(f"Predicted: '{age_output}'")
+            ##################################################
+            print(chat_input)
+            with open("C:/Users/dla12/Documents/Developer/Unity/sesac/Assets/Resources/chat_input.txt", "w",encoding="UTF-8") as f:
+                # Write the response to the output file.
+
+                f.write(chat_input)
+                f.close()
+            p = chat_input + age_output
+            # client_socket.sendall("chat_input.txt".encode("UTF-8"))
+            q = p.strip()
+            a = ''
+            while 1:
+                input_ids = torch.LongTensor(tok.encode(U_TKN + q + SENT + sent + S_TKN + a)).unsqueeze(dim=0)
+                pred = self(input_ids)
+                gen = tok.convert_ids_to_tokens(
+                torch.argmax(
+                    pred,
+                    dim=-1).squeeze().numpy().tolist())[-1]
+                if gen == EOS:
+                    break
+                a += gen.replace('▁', ' ')
+                chat_output = a.strip()
+                chat_output = chat_output + '.'
+            print("Chatbot > {}".format(chat_output))
+            with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/chat_output.txt", "w",encoding="UTF-8") as f:
+                # Write the response to the output file.
+                f.write(chat_output)
+                f.close()
+            client_tts = texttospeech.TextToSpeechClient()
+
+            synthesis_input = texttospeech.SynthesisInput(text=chat_output)
+
+            voice = texttospeech.VoiceSelectionParams(
+                language_code="ko-KR", name="ko-KR-Wavenet-D",ssml_gender=texttospeech.SsmlVoiceGender.MALE
+            )
+
+            audio_config = texttospeech.AudioConfig(
+                audio_encoding=texttospeech.AudioEncoding.LINEAR16
+            )
+
+            response_tts = client_tts.synthesize_speech(
+                input=synthesis_input, voice=voice, audio_config=audio_config
+            )
+
+            with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/output.wav", "wb") as out:
+                out.write(response_tts.audio_content)
+                f.close()
+            
+            chat_output_en = Translator().translate(chat_output).text
+            print(type(chat_output_en))
+            print(chat_output_en)
+            with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/chat_output_en.txt", "w",encoding="UTF-8") as f:
+                # Write the response to the output file.
+                f.write(chat_output_en)
+                f.close()
+            print('제스처 생성')
+            
+            # gesture(parse_args())
                 
-                # get a sample from the age dataset for infence
-                input, target = asd[0][0], asd[0][1] # [batch size, num_channels, frequncy, time]
-                input.unsqueeze_(0)
-
-                # make an infernece
-                predicted, expected = predict(cnn, input, target, class_mapping)
-                age = int(predicted)
-
-                if (age <= 19):
-                    age_output = ' child'
-                elif (age > 20 & age < 59):
-                    age_output = ' adult'
-                else:
-                    age_output = ' senior'    
-
-                print(age)
-                print(f"Predicted: '{age_output}'")
-                ##################################################
-                print(chat_input)
-                with open("C:/Users/dla12/Documents/Developer/Unity/sesac/Assets/Resources/chat_input.txt", "w",encoding="UTF-8") as f:
-                    # Write the response to the output file.
-
-                    f.write(chat_input)
-                    f.close()
-                p = chat_input + age_output
-                # client_socket.sendall("chat_input.txt".encode("UTF-8"))
-                q = p.strip()
-                a = ''
-                while 1:
-                    input_ids = torch.LongTensor(tok.encode(U_TKN + q + SENT + sent + S_TKN + a)).unsqueeze(dim=0)
-                    pred = self(input_ids)
-                    gen = tok.convert_ids_to_tokens(
-                    torch.argmax(
-                        pred,
-                        dim=-1).squeeze().numpy().tolist())[-1]
-                    if gen == EOS:
-                        break
-                    a += gen.replace('▁', ' ')
-                    chat_output = a.strip()
-                print("Chatbot > {}".format(chat_output))
-                with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/chat_output.txt", "w",encoding="UTF-8") as f:
-                    # Write the response to the output file.
-                    f.write(chat_output)
-                    f.close()
-                client_tts = texttospeech.TextToSpeechClient()
-
-                synthesis_input = texttospeech.SynthesisInput(text=chat_output)
-
-                voice = texttospeech.VoiceSelectionParams(
-                    language_code="ko-KR", name="ko-KR-Wavenet-D",ssml_gender=texttospeech.SsmlVoiceGender.MALE
-                )
-
-                audio_config = texttospeech.AudioConfig(
-                    audio_encoding=texttospeech.AudioEncoding.LINEAR16
-                )
-
-                response_tts = client_tts.synthesize_speech(
-                    input=synthesis_input, voice=voice, audio_config=audio_config
-                )
-
-                with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/output.wav", "wb") as out:
-                    out.write(response_tts.audio_content)
-                    f.close()
+                
 
 
 
@@ -505,9 +623,10 @@ class KoGPT2Chat(LightningModule):
 parser = KoGPT2Chat.add_model_specific_args(parser)
 parser = Trainer.add_argparse_args(parser)
 args = parser.parse_args()
-logging.info(args)
+# logging.info(args)
 
 if __name__ == "__main__":
     model = KoGPT2Chat.load_from_checkpoint(args.model_params)
-    model.chat()
-  
+    while 1:
+        model.chat()
+        gesture(parse_args())
