@@ -66,14 +66,16 @@ public class pythonnet : MonoBehaviour
                 dynamic sys = Py.Import("sys"); // 위와 동일
 
                 // 실행할 Python 파일 경로
-                var python_file_path = @"C:\Users\dla12\source\repos\PythonProject\python_file\pythonnet_test.py";
+                //var python_file_path = @"C:\Users\dla12\source\repos\PythonProject\python_file\pythonnet_test.py";
+                var python_file_path = @"C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\python\integrated.py";
                 sys.path.append(os.path.dirname(os.path.expanduser(python_file_path)));
                 var fromFile = Py.Import(Path.GetFileNameWithoutExtension(python_file_path));
 
                 // pythonnet_test.py 에서 replace 메소드를 호출
-                var a = fromFile.InvokeMethod("test");
-
+                var a = fromFile.InvokeMethod("unity_run");
+                Debug.Log("파이썬 실행 완료");
                 Debug.Log(a);
+                Debug.Log(a.GetType());
             }
 
             // python 환경을 종료한다.

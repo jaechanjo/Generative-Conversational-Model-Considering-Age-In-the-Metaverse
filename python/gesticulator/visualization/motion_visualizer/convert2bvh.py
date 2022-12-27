@@ -8,11 +8,11 @@ import joblib
 
 
 def write_bvh(datapipe_file, anim_clip, filename, fps):
-    print(datapipe_file)
-    print(anim_clip)
-    print(filename)
-    print(fps)
-    print(datapipe_file[0])
+    # print(datapipe_file)
+    # print(anim_clip)
+    # print(filename)
+    # print(fps)
+    # print(datapipe_file[0])
     data_pipeline = joblib.load(datapipe_file[0])
     print(data_pipeline)
     inv_data = data_pipeline.inverse_transform(anim_clip)
@@ -20,7 +20,7 @@ def write_bvh(datapipe_file, anim_clip, filename, fps):
     for i in range(0, anim_clip.shape[0]):
         with open(filename, "w") as f:
             writer.write(inv_data[i], f, framerate=fps)
-
+    
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:

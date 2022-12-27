@@ -36,19 +36,22 @@ from gesticulator.model.model import GesticulatorModel
 from gesticulator.interface.gesture_predictor import GesturePredictor
 from gesticulator.visualization.motion_visualizer.generate_videos import visualize
 
-parser = argparse.ArgumentParser(description='Age_dialogue based on KoGPT-2')
+global Player_talk
+global NPC_talk
 
-parser.add_argument('--chat',
+parser_chat = argparse.ArgumentParser(description='Age_dialogue based on KoGPT-2')
+
+parser_chat.add_argument('--chat',
                     action='store_true',
                     default='False',
                     help='response generation on given user input')
 
-parser.add_argument('--model_params',
+parser_chat.add_argument('--model_params',
                     type=str,
-                    default='dialogue.ckpt',
+                    default='C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/dialogue.ckpt',
                     help='model binary for starting chat')
 
-parser.add_argument('--train',
+parser_chat.add_argument('--train',
                     action='store_true',
                     default=False,
                     help='for training')
@@ -123,37 +126,41 @@ class AgeSoundDataset(Dataset):
         # print(self.annotaions.iloc[index, 6])
         return self.annotaions.iloc[index, 6]
 
-def gesture(args):
+def gesture():
+    
     # 0. Check feature type based on the model
-    feature_type, audio_dim = check_feature_type(args.model_file)
+    feature_type, audio_dim = check_feature_type(args2.model_file)
     # 1. Load the model
     model = GesticulatorModel.load_from_checkpoint(
-        args.model_file, inference_mode=True)
+        args2.model_file, inference_mode=True)
     # print(model)
     # This interface is a wrapper around the model for predicting new gestures conveniently
     gp = GesturePredictor(model, feature_type)
     # args.audio = "C:/Users/sogang/Documents/development/Python/final/output.wav"
     # args.text = "C:/Users/sogang/Documents/development/Python/final/output.txt"
     # 2. Predict the gestures with the loaded model
-    print(args.audio + args.text)
-    motion = gp.predict_gestures(args.audio, args.text)
+    print(args2.audio + args2.text)
+    motion = gp.predict_gestures(args2.audio, args2.text)
     # 3. Visualize the results
     motion_length_sec = int(motion.shape[1] / 20)
-
+    
     visualize(motion.detach(), "temp.bvh", "temp.npy", "temp.mp4", 
             start_t = 0, end_t = motion_length_sec, 
             data_pipe_dir = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/gesticulator/utils/data_pipe.sav')
+    
+    
+    
 
     # Add the audio to the video
-    command = f"ffmpeg -y -i {args.audio} -i temp.mp4 -c:v libx264 -c:a libvorbis -loglevel quiet -shortest {args.video_out}"
-    subprocess.call(command.split())
+    # command = f"ffmpeg -y -i {args2.audio} -i temp.mp4 -c:v libx264 -c:a libvorbis -loglevel quiet -shortest {args2.video_out}"
+    # subprocess.call(command.split())
 
     # print("\nGenerated video:", args.video_out)
     
     # Remove temporary files
     # for ext in ["bvh", "npy", "mp4"]:
-    for ext in ["npy", "mp4"]:
-        os.remove("temp." + ext)
+    # for ext in ["npy", "mp4"]:
+    #     os.remove("temp." + ext)
 
 def check_feature_type(model_file):
     """
@@ -201,22 +208,21 @@ def check_feature_type(model_file):
 
 #     return output_path
 
-def parse_args():
-    parser = ArgumentParser()
-    parser.add_argument('--audio', type=str, default="C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/output.wav", help="path to the input speech recording")
-    parser.add_argument('--text', type=str, default="C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/chat_output_en.txt",
-                        help="one of the following: "
-                            "1) path to a time-annotated JSON transcription (this is what the model was trained with) "
-                            "2) path to a plaintext transcription, or " 
-                            "3) the text transcription itself (as a string)")
-    parser.add_argument('--video_out', '-video', type=str, default="output/generated_motion.mp4",
-                        help="the path where the generated video will be saved.")
-    parser.add_argument('--model_file', '-model', type=str, default="demo/models/default.ckpt",
-                        help="path to a pretrained model checkpoint")
-    parser.add_argument('--mean_pose_file', '-mean_pose', type=str, default="../gesticulator/utils/mean_pose.npy",
-                        help="path to the mean pose in the dataset (saved as a .npy file)")
-    
-    return parser.parse_args()
+
+parser_ges = ArgumentParser()
+parser_ges.add_argument('--audio', type=str, default="C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/output.wav", help="path to the input speech recording")
+parser_ges.add_argument('--text', type=str, default="C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/chat_output_en.txt",
+                    help="one of the following: "
+                        "1) path to a time-annotated JSON transcription (this is what the model was trained with) "
+                        "2) path to a plaintext transcription, or " 
+                        "3) the text transcription itself (as a string)")
+parser_ges.add_argument('--video_out', '-video', type=str, default="output/generated_motion.mp4",
+                    help="the path where the generated video will be saved.")
+parser_ges.add_argument('--model_file', '-model', type=str, default="C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/demo/models/default.ckpt",
+                    help="path to a pretrained model checkpoint")
+parser_ges.add_argument('--mean_pose_file', '-mean_pose', type=str, default="../gesticulator/utils/mean_pose.npy",
+                    help="path to the mean pose in the dataset (saved as a .npy file)")
+
 
 
 
@@ -437,25 +443,25 @@ class KoGPT2Chat(LightningModule):
     @staticmethod
     def add_model_specific_args(parent_parser):
         # add model specific args
-        parser = argparse.ArgumentParser(parents=[parent_parser], add_help=False)
-        parser.add_argument('--max-len',
+        parser_chat = argparse.ArgumentParser(parents=[parent_parser], add_help=False)
+        parser_chat.add_argument('--max-len',
                             type=int,
                             default=64,
                             help='max sentence length on input (default: 32)')
 
-        parser.add_argument('--batch-size',
+        parser_chat.add_argument('--batch-size',
                             type=int,
                             default=28,
                             help='batch size for training (default: 96)')
-        parser.add_argument('--lr',
+        parser_chat.add_argument('--lr',
                             type=float,
                             default=5e-5,
                             help='The initial learning rate')
-        parser.add_argument('--warmup_ratio',
+        parser_chat.add_argument('--warmup_ratio',
                             type=float,
                             default=0.1,
                             help='warmup ratio')
-        return parser
+        return parser_chat
 
     def forward(self, inputs):
         # (batch, seq_len, hiddens)
@@ -554,7 +560,7 @@ class KoGPT2Chat(LightningModule):
             else:
                 age_output = ' senior'    
 
-            print(age)
+            # print(age)
             print(f"Predicted: '{age_output}'")
             ##################################################
             print(chat_input)
@@ -605,14 +611,21 @@ class KoGPT2Chat(LightningModule):
                 f.close()
             
             chat_output_en = Translator().translate(chat_output).text
-            print(type(chat_output_en))
-            print(chat_output_en)
+            # print(type(chat_output_en))
+            # print(chat_output_en)
             with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/chat_output_en.txt", "w",encoding="UTF-8") as f:
                 # Write the response to the output file.
                 f.write(chat_output_en)
                 f.close()
-            print('제스처 생성')
+
+            chat_input = str(chat_input)
+            chat_output = str(chat_output)
+            Player_talk = chat_input
+            NPC_talk = chat_output
+
+            print('제스처 생성할까요?')
             
+            return Player_talk, NPC_talk
             # gesture(parse_args())
                 
                 
@@ -620,13 +633,20 @@ class KoGPT2Chat(LightningModule):
 
 
 
-parser = KoGPT2Chat.add_model_specific_args(parser)
-parser = Trainer.add_argparse_args(parser)
-args = parser.parse_args()
+parser_chat = KoGPT2Chat.add_model_specific_args(parser_chat)
+parser_chat = Trainer.add_argparse_args(parser_chat)
+args = parser_chat.parse_args()
 # logging.info(args)
 
-if __name__ == "__main__":
+args2 = parser_ges.parse_args()
+
+def unity_run():
     model = KoGPT2Chat.load_from_checkpoint(args.model_params)
-    while 1:
-        model.chat()
-        gesture(parse_args())
+    
+    
+    return model.chat(), gesture()
+    
+
+if __name__ == "__main__":
+    unity_run()
+
