@@ -57,7 +57,7 @@ parser_chat.add_argument('--train',
                     help='for training')
 
 audio_data = pd.read_csv('C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/age.csv')
-speech_file = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/audio.wav'
+speech_file = 'C:/Users/dla12/AppData/LocalLow/DefaultCompany/MetaVH/audio.wav'
 
 
 class AgeSoundDataset(Dataset):
@@ -144,7 +144,7 @@ def gesture():
     # 3. Visualize the results
     motion_length_sec = int(motion.shape[1] / 20)
     
-    visualize(motion.detach(), "temp.bvh", "temp.npy", "temp.mp4", 
+    visualize(motion.detach(), "C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Assets/temp.bvh", "temp.npy", "temp.mp4", 
             start_t = 0, end_t = motion_length_sec, 
             data_pipe_dir = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/gesticulator/utils/data_pipe.sav')
     
@@ -210,8 +210,8 @@ def check_feature_type(model_file):
 
 
 parser_ges = ArgumentParser()
-parser_ges.add_argument('--audio', type=str, default="C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/output.wav", help="path to the input speech recording")
-parser_ges.add_argument('--text', type=str, default="C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/chat_output_en.txt",
+parser_ges.add_argument('--audio', type=str, default="C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Assets/output/output.wav", help="path to the input speech recording")
+parser_ges.add_argument('--text', type=str, default="C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Assets/output/chat_output_en.txt",
                     help="one of the following: "
                         "1) path to a time-annotated JSON transcription (this is what the model was trained with) "
                         "2) path to a plaintext transcription, or " 
@@ -524,7 +524,7 @@ class KoGPT2Chat(LightningModule):
         with torch.no_grad():
             ###############################################
             ANNOTATIONS_FILE = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/age.csv'
-            AUDIO_DIR = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/python/'
+            AUDIO_DIR = 'C:/Users/dla12/AppData/LocalLow/DefaultCompany/MetaVH/'
             SAMPLE_RATE = 22050
             NUM_SAMPLES = 22050
 
@@ -564,7 +564,7 @@ class KoGPT2Chat(LightningModule):
             print(f"Predicted: '{age_output}'")
             ##################################################
             print(chat_input)
-            with open("C:/Users/dla12/Documents/Developer/Unity/sesac/Assets/Resources/chat_input.txt", "w",encoding="UTF-8") as f:
+            with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/chat_input.txt", "w",encoding="UTF-8") as f:
                 # Write the response to the output file.
 
                 f.write(chat_input)
@@ -586,7 +586,7 @@ class KoGPT2Chat(LightningModule):
                 chat_output = a.strip()
                 chat_output = chat_output + '.'
             print("Chatbot > {}".format(chat_output))
-            with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/chat_output.txt", "w",encoding="UTF-8") as f:
+            with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Assets/output/chat_output.txt", "w",encoding="UTF-8") as f:
                 # Write the response to the output file.
                 f.write(chat_output)
                 f.close()
@@ -606,14 +606,14 @@ class KoGPT2Chat(LightningModule):
                 input=synthesis_input, voice=voice, audio_config=audio_config
             )
 
-            with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/output.wav", "wb") as out:
+            with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Assets/output/output.wav", "wb") as out:
                 out.write(response_tts.audio_content)
                 f.close()
             
             chat_output_en = Translator().translate(chat_output).text
             # print(type(chat_output_en))
             # print(chat_output_en)
-            with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/metaverse/Assets/output/chat_output_en.txt", "w",encoding="UTF-8") as f:
+            with open("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Assets/output/chat_output_en.txt", "w",encoding="UTF-8") as f:
                 # Write the response to the output file.
                 f.write(chat_output_en)
                 f.close()

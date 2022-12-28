@@ -56,7 +56,8 @@ def generate_videos(raw_input_folder, output_folder, run_name, data_pipe_dir, st
         # shorten
         motion = motion[:1200]
 
-        resulting_bvh_file   = output_folder + "/" +  filename + ".bvh"
+        # resulting_bvh_file   = 'C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Assets' + "/" +  filename + ".bvh"
+        resulting_bvh_file   = output_folder + "/" + filename +"bvh"
         resulting_npy_file   = output_folder + "/" + filename +"_3d.npy"
         resulting_video_file = output_folder + "/" + filename + ".mp4"
 
