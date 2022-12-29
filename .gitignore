@@ -82,6 +82,7 @@ sesac-371212-227f22f8a69a.json
 *.pth
 audio.wav
 age.py
+/python/README.md
 
 # MetaVH
 /MetaVH/Library/ArtifactDB

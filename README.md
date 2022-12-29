@@ -1,5 +1,7 @@
 # Generative Conversational Model Considering Age In the Metaverse (메타버스에서 연령을 고려한 대화 생성 모델)
-
+|beta test|
+|:---:|
+|<img src="./image/final.gif" width="500" height="250">|
 
 &nbsp;
 ## 🎈 __Subject__
@@ -17,10 +19,10 @@
 
 
 ### 2. flowchart
-* 검은옷 : 메타버스 안에서 나를 대신할 아바타, 흰색옷 : 나와 상호 작용할 아바타
-   * 웹캠을 통해 사용자의 얼굴을 입력 받으면 감정분류 모델에서 감정을 분류하여 내 케릭터 표정을 맵핑합니다.
+* 흰색옷 : 메타버스 안에서 나를 대신할 아바타, 검은옷 : 나와 상호 작용할 아바타
    * 사용자가 발화를 하면 음성을 STT api를 사용하여 텍스트로 변환하는 동시에 연령분류모델을 통해 연령층이 분류됩니다.
-   * 발화한 텍스트와 ㅇ녀령을 기반으로 대화생성모델에서 대화를 생성합니다. 생성된 대화는 TTS api를 사용하여 가상인간이 발화 할 수 있도록 합니다.
+   * 발화한 텍스트와 연령을 기반으로 대화생성모델에서 대화를 생성합니다. 생성된 대화는 TTS api를 사용하여 가상인간이 발화 할 수 있도록 합니다.
+   * 생성된 대화를 제스처생성모델(Gesticulator)에 input하여 제스처를 생성합니다. 생성된 제스처는 가상인간에 retargetting하여 더욱 사실적인 경험을 가져올 수 있습니다.
       
 |flowchart|
 |:---:|
@@ -45,9 +47,12 @@
 |:---:|
 |<img src="./image/Generative Conversational Model.png" width="500" height="150">|
 
-### 3. Emotion Classification Model – 사용자의 얼굴로부터 표정을 분류하는 모델
-* 7가지의 감정으로 구성된 얼굴표정 데이터셋을 사용해 Emotion Classification Model 생성
-* 웹캠을 통해 사용자의 이미지를 실시간으로 입력받아 Emotion Classification Model로 사용자의 표정을 분류하여 아바타에 맵핑
+### 3. Gesture Generation Model (Gesticulator) – 제스처 생성 모델
+* 말하는 동안 사람들은 자발적으로 몸짓을 하며 정보 전달에 중요한 역할
+* 제스처는 가상인간과 자연스럽고 원활한 상호 작용을 가능하게 하는 데 중요 
+* Gesticulator은 음성의 음향 및 의미론적 표현을 모두 입력으로 취하고 일련의 관절 각도 회전으로 제스처를 출력으로 생성
+* 출력된 제스처는 가상인간에 적용
+* Gesticulator은 영문을 입력받기 때문에 생성된 한국어 대화를 googletrans api로 번역하여 모델에 입력
 
 |Emotion Classification Model|
 |:---:|
