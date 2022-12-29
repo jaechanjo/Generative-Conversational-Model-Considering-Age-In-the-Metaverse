@@ -13,6 +13,7 @@ using SpeechBubbleManager = VikingCrewTools.UI.SpeechBubbleManager;
 using UnityEditor.Animations;
 using System.Threading;
 using System.Threading.Tasks;
+using Winterdust;
 
 public class pythonnet : MonoBehaviour
 {
@@ -29,6 +30,8 @@ public class pythonnet : MonoBehaviour
     [SerializeField] private AudioClip[] clip; // output 
 
     public int result = 0;
+
+   
 
     // Start is called before the first frame update
     void Start()
@@ -78,8 +81,8 @@ public class pythonnet : MonoBehaviour
                 dynamic sys = Py.Import("sys"); // 위와 동일
 
                 // 실행할 Python 파일 경로
-                var python_file_path = @"C:\Users\dla12\source\repos\PythonProject\python_file\pythonnet_test.py";
-                //var python_file_path = @"C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\python\integrated.py";
+                //var python_file_path = @"C:\Users\dla12\source\repos\PythonProject\python_file\pythonnet_test.py";
+                var python_file_path = @"C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\python\integrated.py";
                 sys.path.append(os.path.dirname(os.path.expanduser(python_file_path)));
                 var fromFile = Py.Import(Path.GetFileNameWithoutExtension(python_file_path));
 
@@ -104,6 +107,7 @@ public class pythonnet : MonoBehaviour
         Debug.Log(char_input);
         Talk();
         PlaySnd();
+        //bvh_play();
     }
 
 
@@ -178,5 +182,12 @@ public class pythonnet : MonoBehaviour
         Debug.Log("invoke 3초");
         SavWav.Save("audio.wav", aud.clip);
         Debug.Log("파일 저장완료");
+    }
+
+    void bvh_play()
+    {
+        BVH myBvh = new BVH("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Assets/temp.bvh");
+        GameObject skeletonGO = myBvh.makeDebugSkeleton();
+        AnimationClip Bvh_clip = myBvh.makeAnimationClip();
     }
 }

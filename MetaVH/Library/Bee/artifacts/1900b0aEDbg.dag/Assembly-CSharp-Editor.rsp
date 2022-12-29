@@ -117,6 +117,7 @@
 -define:CSHARP_7_3_OR_NEWER
 -r:"Assets/Plugins/DllTest.dll"
 -r:"Assets/Plugins/Python.Runtime.dll"
+-r:"Assets/Plugins/Winterdust/BvhImporterExporterDemo1.1.0.dll"
 -r:"Assets/StarterAssets/Editor/PackageChecker/StarterAssetsPackageChecker.dll"
 -r:"C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Library/PackageCache/com.unity.collab-proxy@1.17.7/Lib/Editor/PlasticSCM/log4netPlastic.dll"
 -r:"C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Library/PackageCache/com.unity.collab-proxy@1.17.7/Lib/Editor/PlasticSCM/Unity.Plastic.Antlr3.Runtime.dll"
@@ -339,7 +340,6 @@
 -r:"C:/Users/dla12/Documents/Developer/Unity/2021.3.16f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/System.Transactions.dll"
 -r:"C:/Users/dla12/Documents/Developer/Unity/2021.3.16f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/System.Xml.dll"
 -r:"C:/Users/dla12/Documents/Developer/Unity/2021.3.16f1/Editor/Data/UnityReferenceAssemblies/unity-4.8-api/System.Xml.Linq.dll"
--r:"Library/Bee/artifacts/1900b0aEDbg.dag/Assembly-CSharp-Editor-firstpass.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/Assembly-CSharp-firstpass.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/Assembly-CSharp.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/Cinemachine.ref.dll"
