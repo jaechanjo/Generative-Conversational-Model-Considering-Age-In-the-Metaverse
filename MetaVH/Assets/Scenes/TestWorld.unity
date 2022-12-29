@@ -264,7 +264,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &601976740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,7 +367,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerComment: {fileID: 1770423597}
   _NPC_Comment: {fileID: 1011447963}
-  GameObject: {fileID: 0}
+  NPC: {fileID: 1011447957}
+  bvhRetargetter: {fileID: 601976739}
   char_input: 
   char_output: 
   clip:
@@ -549,7 +550,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2790547027829776161, guid: 17fd0d1ba71c7d64d8570434958a352e, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2790547027829776161, guid: 17fd0d1ba71c7d64d8570434958a352e, type: 3}
       propertyPath: m_Controller
@@ -565,7 +566,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6847913108515707687, guid: 17fd0d1ba71c7d64d8570434958a352e, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6847913108515707687, guid: 17fd0d1ba71c7d64d8570434958a352e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -998,6 +999,14 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 3219590845208979285, guid: d416466c681e49c4db59c64cff9a45db, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.057685193
+      objectReference: {fileID: 0}
+    - target: {fileID: 3219590845208979285, guid: d416466c681e49c4db59c64cff9a45db, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.10282274
+      objectReference: {fileID: 0}
     - target: {fileID: 3400455426772059659, guid: d416466c681e49c4db59c64cff9a45db, type: 3}
       propertyPath: m_Layer
       value: 3
@@ -1029,6 +1038,10 @@ PrefabInstance:
     - target: {fileID: 3922742533685768889, guid: d416466c681e49c4db59c64cff9a45db, type: 3}
       propertyPath: m_Layer
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3922742533685768889, guid: d416466c681e49c4db59c64cff9a45db, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4117121906655554344, guid: d416466c681e49c4db59c64cff9a45db, type: 3}
       propertyPath: m_Controller
@@ -1188,7 +1201,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7971400344576688278, guid: d416466c681e49c4db59c64cff9a45db, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7971400344576688278, guid: d416466c681e49c4db59c64cff9a45db, type: 3}
       propertyPath: m_LocalPosition.x

@@ -22,16 +22,17 @@ public class pythonnet : MonoBehaviour
     [SerializeField] private SayRandomThingsBehaviour _playerComment, _NPC_Comment;
 
     private AudioSource aud;
-    public GameObject GameObject;
-
+    public GameObject NPC;
+    public GameObject bvhRetargetter;
     public string char_input;
     public string char_output;
     private AudioSource output; // output 재생기
     [SerializeField] private AudioClip[] clip; // output 
 
     public int result = 0;
+/*    public GameObject sk;*/
 
-   
+
 
     // Start is called before the first frame update
     void Start()
@@ -107,7 +108,7 @@ public class pythonnet : MonoBehaviour
         Debug.Log(char_input);
         Talk();
         PlaySnd();
-        //bvh_play();
+        bvh_play();
     }
 
 
@@ -186,6 +187,20 @@ public class pythonnet : MonoBehaviour
 
     void bvh_play()
     {
+        
+        Animator npc_anim = gameObject.AddComponent<Animator>();
+        NPC.transform.position = new Vector3(-1, (float)0.87, 0);
+        npc_anim.enabled = false;
+        bvhRetargetter.gameObject.SetActive(true);
+        GameObject.Find("Skeleton").gameObject.SetActive(false);
+ /*       Invoke("rest", 3f);
+        NPC.transform.position = new Vector3(-1, 0, 0);
+        npc_anim.enabled = true;
+        bvhRetargetter.gameObject.SetActive(false);*/
+    }
 
+    void rest()
+    {
+        Debug.Log("위치조정중");
     }
 }
