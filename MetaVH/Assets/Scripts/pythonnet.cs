@@ -188,7 +188,7 @@ public class pythonnet : MonoBehaviour
     void bvh_play()
     {
         Debug.Log("bvh파일 실행");
-        
+        AssetDatabase.Refresh();
         NPC.transform.position = new Vector3(-1, (float)0.87, 0);
         NPC.gameObject.GetComponent<Animator>().enabled = false;
         bvhRetargetter.gameObject.GetComponent<BVHFrameGetter>().enabled = true;
