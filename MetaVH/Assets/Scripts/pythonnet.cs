@@ -20,11 +20,13 @@ public class pythonnet : MonoBehaviour
 
     [SerializeField] private SayRandomThingsBehaviour _playerComment, _NPC_Comment;
 
-    private AudioSource Audio;
+    private AudioSource aud;
     public GameObject GameObject;
 
     public string char_input;
     public string char_output;
+    private AudioSource output; // output 재생기
+    [SerializeField] private AudioClip[] clip; // output 
 
     public int result = 0;
 
@@ -34,7 +36,8 @@ public class pythonnet : MonoBehaviour
         MakeDllClass debug = new MakeDllClass();
         debug.Test();
         ani = gameObject.GetComponent<Animator>();
-        Audio = GetComponent<AudioSource>();
+        aud = GetComponent<AudioSource>();
+        output = GetComponent<AudioSource>();
         Debug.Log("Run() invoked in Start()");
         Debug.Log("Run() returns");
     }
@@ -42,6 +45,11 @@ public class pythonnet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            RecSnd();
+        }
+
         if (Input.GetKeyDown(KeyCode.Z))
         {
             Run();
@@ -94,14 +102,31 @@ public class pythonnet : MonoBehaviour
             
         });
         Debug.Log(char_input);
-        Talk(char_input, char_output);
+        Talk();
+        PlaySnd();
     }
 
 
 
-    void Talk(string char_input, string char_output)
+    void RecSnd()
+    { // 현재 마이크, loop false, 3초, 44100 hz
+        aud.clip = Microphone.Start(Microphone.devices[0].ToString(), false, 3, 44100);
+        AudioClip myAudio = aud.clip;
+        Debug.Log(myAudio);
+
+        Invoke("testInvoke", 3f);
+        //Invoke("myInvoke", 3f); // 1초 뒤 시작
+        Debug.Log("dd");
+
+    }
+
+
+    void Talk()
     {
         Debug.Log("대화창시작");
+        char_input = System.IO.File.ReadAllText("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/chat_input.txt"); // 텍스트 파일 내용 불러오기
+        char_output = System.IO.File.ReadAllText("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Assets/output/chat_output.txt"); // 텍스트 파일 내용 불러오기
+
         AssetDatabase.Refresh();
         //                string comment = ReadTextOneLine("chat_input");
         string comment = char_input;
@@ -129,6 +154,13 @@ public class pythonnet : MonoBehaviour
         _NPC_Comment.thingsToSay[0] = "";
     }
 
+    public void PlaySnd()
+    {
+        aud.Play();
+        output.clip = clip[0];
+        output.Play();
+    }
+
 
     // bublle message
     string ReadTextOneLine(string _filename)
@@ -139,5 +171,12 @@ public class pythonnet : MonoBehaviour
         string a = stringReader.ReadLine();
         stringReader.Close();
         return a;
+    }
+
+    void testInvoke()
+    {
+        Debug.Log("invoke 3초");
+        SavWav.Save("audio.wav", aud.clip);
+        Debug.Log("파일 저장완료");
     }
 }

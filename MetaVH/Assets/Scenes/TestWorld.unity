@@ -297,6 +297,8 @@ MonoBehaviour:
   GameObject: {fileID: 0}
   char_input: 
   char_output: 
+  clip:
+  - {fileID: 8300000, guid: ba052e7d6cce8154eb94afce0ed8b21d, type: 3}
   result: 0
 --- !u!82 &933184747
 AudioSource:
@@ -319,9 +321,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 10
+  MaxDistance: 500
   Pan2D: 0
-  rolloffMode: 2
+  rolloffMode: 0
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -329,23 +331,23 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0.1
+      time: 0
       value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 0.9971924
-      inSlope: -0.02073848
-      outSlope: -0.02073848
+      value: 0
+      inSlope: 0
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.122593515
-      outWeight: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -1453,19 +1455,6 @@ MonoBehaviour:
   mouth: {fileID: 95071616}
   timeBetweenSpeak: 0
   doTalkOnYourOwn: 0
---- !u!114 &1770423598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1770423589}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe24fd726096e5e4eab9626534953675, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  aud: {fileID: 0}
 --- !u!1 &1873395821
 GameObject:
   m_ObjectHideFlags: 3
@@ -1650,12 +1639,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114000013829348910, guid: 0052c7a2273aa0a468757492e71cdaa6, type: 3}
       propertyPath: _prefabs.Array.data[0].type
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 114000013829348910, guid: 0052c7a2273aa0a468757492e71cdaa6, type: 3}
       propertyPath: _prefabs.Array.data[0].prefab
       value: 
-      objectReference: {fileID: 1000011352178948, guid: 2b4aebaca95e24f4da9831ced53ee2db, type: 3}
+      objectReference: {fileID: 1000011352178948, guid: 81500a6668749764bb5dee5b1b18817c, type: 3}
     - target: {fileID: 224000011360181680, guid: 0052c7a2273aa0a468757492e71cdaa6, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
