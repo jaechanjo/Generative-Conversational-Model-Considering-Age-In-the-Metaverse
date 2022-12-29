@@ -81,8 +81,8 @@ public class pythonnet : MonoBehaviour
                 dynamic sys = Py.Import("sys"); // 위와 동일
 
                 // 실행할 Python 파일 경로
-                //var python_file_path = @"C:\Users\dla12\source\repos\PythonProject\python_file\pythonnet_test.py";
-                var python_file_path = @"C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\python\integrated.py";
+                var python_file_path = @"C:\Users\dla12\source\repos\PythonProject\python_file\pythonnet_test.py";
+                //var python_file_path = @"C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\python\integrated.py";
                 sys.path.append(os.path.dirname(os.path.expanduser(python_file_path)));
                 var fromFile = Py.Import(Path.GetFileNameWithoutExtension(python_file_path));
 

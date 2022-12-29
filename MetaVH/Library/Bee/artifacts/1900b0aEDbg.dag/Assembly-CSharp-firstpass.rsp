@@ -117,7 +117,6 @@
 -define:CSHARP_7_3_OR_NEWER
 -r:"Assets/Plugins/DllTest.dll"
 -r:"Assets/Plugins/Python.Runtime.dll"
--r:"Assets/Plugins/Winterdust/BvhImporterExporterDemo1.1.0.dll"
 -r:"C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Library/PackageCache/com.unity.nuget.newtonsoft-json@3.0.2/Runtime/Newtonsoft.Json.dll"
 -r:"C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Library/PackageCache/com.unity.testtools.codecoverage@1.2.2/lib/ReportGenerator/ReportGeneratorMerged.dll"
 -r:"C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Library/PackageCache/com.unity.visualscripting@1.7.8/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll"
@@ -357,7 +356,22 @@
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/Unity.VSCode.Editor.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEditor.UI.ref.dll"
 -r:"Library/Bee/artifacts/1900b0aEDbg.dag/UnityEngine.UI.ref.dll"
+"Assets/Plugins/Scripts/avatarutils.cs"
+"Assets/Plugins/Scripts/buildavatar.cs"
+"Assets/Plugins/Scripts/BVHAnimationRetargetter.cs"
+"Assets/Plugins/Scripts/BVHParser.cs"
+"Assets/Plugins/Scripts/BVHRecorder.cs"
+"Assets/Plugins/Scripts/BvhSkeleton.cs"
+"Assets/Plugins/Scripts/BvhTrackUtils.cs"
+"Assets/Plugins/Scripts/ExampleClasses/ConvertToHumanoidClip.cs"
+"Assets/Plugins/Scripts/GenericRecorder.cs"
+"Assets/Plugins/Scripts/HumanoidRecorder.cs"
+"Assets/Plugins/Scripts/SkinnedMeshExample.cs"
+"Assets/Plugins/Winterdust/BVH.cs"
+"Assets/Plugins/Winterdust/BVHDebugLines.cs"
+"Assets/Plugins/Winterdust/BVHFrameGetter.cs"
 "Assets/Plugins/Winterdust/BvhImporterExporterDemoL.cs"
+"Assets/Plugins/Winterdust/BVHTest.cs"
 -langversion:9.0
 
 /deterministic

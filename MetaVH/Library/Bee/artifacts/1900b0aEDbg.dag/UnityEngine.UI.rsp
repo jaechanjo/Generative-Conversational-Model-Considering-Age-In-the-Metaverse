@@ -122,7 +122,6 @@
 -define:CSHARP_7_3_OR_NEWER
 -r:"Assets/Plugins/DllTest.dll"
 -r:"Assets/Plugins/Python.Runtime.dll"
--r:"Assets/Plugins/Winterdust/BvhImporterExporterDemo1.1.0.dll"
 -r:"Assets/StarterAssets/Editor/PackageChecker/StarterAssetsPackageChecker.dll"
 -r:"C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Library/PackageCache/com.unity.collab-proxy@1.17.7/Lib/Editor/PlasticSCM/log4netPlastic.dll"
 -r:"C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Library/PackageCache/com.unity.collab-proxy@1.17.7/Lib/Editor/PlasticSCM/Unity.Plastic.Antlr3.Runtime.dll"
