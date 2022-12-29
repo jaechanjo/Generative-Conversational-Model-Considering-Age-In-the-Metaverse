@@ -1,7 +1,7 @@
 # Generative Conversational Model Considering Age In the Metaverse (메타버스에서 연령을 고려한 대화 생성 모델)
 |beta test|
 |:---:|
-|<img src="./image/final.gif" width="500" height="250">|
+|<img src="https://user-images.githubusercontent.com/117579307/210011143-90ea8ba9-1f06-4936-97bd-71adb573370c.gif" width="500" height="250">|
 
 &nbsp;
 ## 🎈 __Subject__
@@ -56,7 +56,7 @@
 
 |Emotion Classification Model|
 |:---:|
-|<img src="./image/Emotion Classification Model_mapping.png" width="500" height="150">|
+|<img src="./image/Emotion Classification Model_mapping.png" width="500" height="500">|
 
       
       
