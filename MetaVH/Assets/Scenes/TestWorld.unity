@@ -295,6 +295,9 @@ MonoBehaviour:
   _playerComment: {fileID: 1770423597}
   _NPC_Comment: {fileID: 1011447963}
   GameObject: {fileID: 0}
+  char_input: 
+  char_output: 
+  result: 0
 --- !u!82 &933184747
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1641,6 +1644,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Speechbubble Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 114000013829348910, guid: 0052c7a2273aa0a468757492e71cdaa6, type: 3}
+      propertyPath: _prefabs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013829348910, guid: 0052c7a2273aa0a468757492e71cdaa6, type: 3}
+      propertyPath: _prefabs.Array.data[0].type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114000013829348910, guid: 0052c7a2273aa0a468757492e71cdaa6, type: 3}
+      propertyPath: _prefabs.Array.data[0].prefab
+      value: 
+      objectReference: {fileID: 1000011352178948, guid: 2b4aebaca95e24f4da9831ced53ee2db, type: 3}
     - target: {fileID: 224000011360181680, guid: 0052c7a2273aa0a468757492e71cdaa6, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
