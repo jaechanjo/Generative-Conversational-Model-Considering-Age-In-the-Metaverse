@@ -82,8 +82,8 @@ public class pythonnet : MonoBehaviour
                 dynamic sys = Py.Import("sys"); // 위와 동일
 
                 // 실행할 Python 파일 경로
-                var python_file_path = @"C:\Users\dla12\source\repos\PythonProject\python_file\pythonnet_test.py";
-                //var python_file_path = @"C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\python\integrated.py";
+                //var python_file_path = @"C:\Users\dla12\source\repos\PythonProject\python_file\pythonnet_test.py";
+                var python_file_path = @"C:\Users\dla12\Documents\Developer\Generative-Conversational-Model-Considering-Age-In-the-Metaverse\python\integrated.py";
                 sys.path.append(os.path.dirname(os.path.expanduser(python_file_path)));
                 var fromFile = Py.Import(Path.GetFileNameWithoutExtension(python_file_path));
 
@@ -187,20 +187,27 @@ public class pythonnet : MonoBehaviour
 
     void bvh_play()
     {
+        Debug.Log("bvh파일 실행");
         
-        Animator npc_anim = gameObject.AddComponent<Animator>();
         NPC.transform.position = new Vector3(-1, (float)0.87, 0);
-        npc_anim.enabled = false;
-        bvhRetargetter.gameObject.SetActive(true);
-        GameObject.Find("Skeleton").gameObject.SetActive(false);
- /*       Invoke("rest", 3f);
-        NPC.transform.position = new Vector3(-1, 0, 0);
-        npc_anim.enabled = true;
-        bvhRetargetter.gameObject.SetActive(false);*/
+        NPC.gameObject.GetComponent<Animator>().enabled = false;
+        bvhRetargetter.gameObject.GetComponent<BVHFrameGetter>().enabled = true;
+
+        //bvhRetargetter.gameObject.SetActive(true);
+        //GameObject.Find("Skeleton").gameObject.SetActive(false);
+
+        Invoke("rest", 3f);
+
+
     }
 
     void rest()
     {
         Debug.Log("위치조정중");
+        NPC.transform.position = new Vector3(-1, 0, 0);
+        NPC.gameObject.GetComponent<Animator>().enabled = true;
+        bvhRetargetter.gameObject.GetComponent<BVHFrameGetter>().enabled = false;
+        //bvhRetargetter.gameObject.SetActive(false);
+        Debug.Log("bvh파일 종료");
     }
 }
