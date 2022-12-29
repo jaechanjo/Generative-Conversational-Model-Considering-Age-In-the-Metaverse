@@ -158,7 +158,7 @@ public class pythonnet : MonoBehaviour
         _NPC_Comment.thingsToSay[0] = "";
     }
 
-    public void PlaySnd()
+    void PlaySnd()
     {
         aud.Play();
         output.clip = clip[0];
@@ -186,8 +186,6 @@ public class pythonnet : MonoBehaviour
 
     void bvh_play()
     {
-        BVH myBvh = new BVH("C:/Users/dla12/Documents/Developer/Generative-Conversational-Model-Considering-Age-In-the-Metaverse/MetaVH/Assets/temp.bvh");
-        GameObject skeletonGO = myBvh.makeDebugSkeleton();
-        AnimationClip Bvh_clip = myBvh.makeAnimationClip();
+
     }
 }
